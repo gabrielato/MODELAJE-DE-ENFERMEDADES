@@ -1,0 +1,23 @@
+## Funcion del modelo  ###
+
+COVID<-function(t, state, parameters){ 
+with(as.list(c(state, parameters)),{
+    dS <- -(R0/Dinf)*I*S
+    dE <- (R0/Dinf)*I*S - (1/Dinc)*E
+    dI <- (1/Dinc)*E - (1/Dinf)*I
+    dL <- (1-Pgrave)*(1/Dinf)*I-(1/DRL)*L
+    dG <- Pgrave*(1/Dinf)*I-(1/Dhos)*G
+    dH <- (1/Dhos)*G-(1-PICU)*(1/DRH)*H-PICU*(1/DICU)*H
+    dICU <- PICU*(1/DICU)*H-(1-PM)*(1/DRICU)*ICU-PM(1/DM)*ICU 
+    dR <- (1/DRL)*L+(1-PICU)*(1/DRH)*H+(1-PM)*(1/DRICU)*ICU
+    dM <- PM*(1/DM)*ICU
+    list(c(dS,dE,dI,dL,dG,dH,dICU,dR,dM))
+  })  
+  
+  ## Valores de los parametros ##
+
+parameters <- c(Dinf=2.9, Dinc=5.2, DRL=14, DRH=12, Dhos=4, DICU=1, DRICU=7, DM=8, Pgrave=26.1, PICU=8.2, PM=1.20, R0=2.83)
+state <- c(S =27343, E=1, I=0, L=0, G=0, H=0, ICU=0, R=0, M=0)
+time <- seq(0, 100, by = 0.001)
+out <- ode(y = state, times = time, func = COVID, parms = parameters)
+head(out)
